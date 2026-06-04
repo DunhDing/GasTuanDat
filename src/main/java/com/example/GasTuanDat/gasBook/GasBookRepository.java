@@ -28,12 +28,18 @@ public interface GasBookRepository extends JpaRepository<GasBookEntity, UUID> {
     @Query("""
             SELECT gb FROM GasBookEntity gb
             LEFT JOIN gb.customerGroup cg
-            WHERE (:customerCode IS NULL OR LOWER(gb.gasBookCode) LIKE LOWER(CONCAT('%', CAST(:customerCode AS string), '%')))
+            WHERE (:keyword IS NULL OR (
+                LOWER(gb.gasBookCode) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) OR
+                LOWER(gb.fullName) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) OR
+                gb.phoneNumber LIKE CONCAT('%', CAST(:keyword AS string), '%')
+            ))
+              AND (:customerCode IS NULL OR LOWER(gb.gasBookCode) LIKE LOWER(CONCAT('%', CAST(:customerCode AS string), '%')))
               AND (:fullName IS NULL OR LOWER(gb.fullName) LIKE LOWER(CONCAT('%', CAST(:fullName AS string), '%')))
               AND (:phoneNumber IS NULL OR gb.phoneNumber LIKE CONCAT('%', CAST(:phoneNumber AS string), '%'))
               AND (:customerGroup IS NULL OR LOWER(COALESCE(cg.groupName, '')) LIKE LOWER(CONCAT('%', CAST(:customerGroup AS string), '%')))
             """)
     Page<GasBookEntity> searchGasBooks(
+            @Param("keyword") String keyword,
             @Param("customerCode") String customerCode,
             @Param("fullName") String fullName,
             @Param("phoneNumber") String phoneNumber,

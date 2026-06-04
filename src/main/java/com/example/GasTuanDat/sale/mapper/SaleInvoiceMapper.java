@@ -22,7 +22,7 @@ public interface SaleInvoiceMapper {
 
     @Mapping(target = "employeeId", expression = "java(entity.getEmployee() != null ? entity.getEmployee().getEmployeeId() : null)")
     @Mapping(target = "customerId", expression = "java(entity.getCustomer() != null ? entity.getCustomer().getCustomerId() : null)")
-    @Mapping(target = "customerCode", expression = "java(entity.getCustomer() != null ? entity.getCustomer().getCustomerCode() : (entity.getGasBook() != null ? \"SG\" + entity.getGasBook().getGasBookId().toString().substring(0, 6).toUpperCase() : null))")
+    @Mapping(target = "customerCode", expression = "java(entity.getCustomer() != null ? entity.getCustomer().getCustomerCode() : (entity.getGasBook() != null ? entity.getGasBook().getGasBookCode() : null))")
     @Mapping(target = "customerName", expression = "java(entity.getCustomer() != null ? entity.getCustomer().getFullName() : (entity.getGasBook() != null ? entity.getGasBook().getFullName() : null))")
     @Mapping(target = "gasBookId", expression = "java(entity.getGasBook() != null ? entity.getGasBook().getGasBookId() : null)")
     @Mapping(target = "stockId", expression = "java(entity.getStock() != null ? entity.getStock().getStockId() : null)")

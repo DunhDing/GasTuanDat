@@ -30,8 +30,8 @@ public class PromotionDetailEntity {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "\"promotionId\"")
-    private RewardMilestoneEntity promotion;
+    @JoinColumn(name = "\"rewardMilestoneId\"")
+    private RewardMilestoneEntity rewardMilestone;
 
     @ManyToOne
     @JoinColumn(name = "\"productId\"")

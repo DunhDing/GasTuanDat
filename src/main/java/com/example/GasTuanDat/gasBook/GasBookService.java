@@ -70,6 +70,7 @@ public class GasBookService {
     }
 
     public PageResult<GasBookResponse> search(
+            String keyword,
             String customerCode,
             String fullName,
             String phoneNumber,
@@ -81,7 +82,7 @@ public class GasBookService {
         int pageSize = limit == null || limit <= 0 ? 10 : limit;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("fullName").ascending());
 
-        Page<GasBookEntity> gasBookPage = gasBookRepository.searchGasBooks(customerCode, fullName, phoneNumber, customerGroup, pageable);
+        Page<GasBookEntity> gasBookPage = gasBookRepository.searchGasBooks(keyword, customerCode, fullName, phoneNumber, customerGroup, pageable);
         return buildPageResult(gasBookPage);
     }
 

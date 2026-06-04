@@ -27,8 +27,11 @@ import com.example.GasTuanDat.product.entities.ProductEntity;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RewardMilestoneService {
     private final RewardMilestoneRepository rewardMilestoneRepository;
     private final RewardMilestoneMapper rewardMilestoneMapper;
@@ -49,7 +52,7 @@ public class RewardMilestoneService {
                         .orElse(null);
                 if (product == null) continue;
                 PromotionDetailEntity detailEntity = PromotionDetailEntity.builder()
-                        .promotion(entity)
+                        .rewardMilestone(entity)
                         .product(product)
                         .quantity(detail.getQuantity() != null ? detail.getQuantity() : 1)
                         .build();
@@ -112,7 +115,7 @@ public class RewardMilestoneService {
                         .orElse(null);
                 if (product == null) continue;
                 PromotionDetailEntity detailEntity = PromotionDetailEntity.builder()
-                        .promotion(entity)
+                        .rewardMilestone(entity)
                         .product(product)
                         .quantity(detail.getQuantity() != null ? detail.getQuantity() : 1)
                         .build();

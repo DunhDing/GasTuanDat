@@ -62,7 +62,7 @@ public class RewardMilestoneEntity {
     @Column(name = "\"percentage\"")
     private Double percentage;
 
-    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rewardMilestone", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<PromotionDetailEntity> promotionDetails = new ArrayList<>();
 }

@@ -73,6 +73,7 @@ public class GasBookController {
     @GetMapping("/search")
     @Operation(summary = "Search GasBook with pagination")
     public ApiResponse<PageResult<GasBookResponse>> searchGasBook(
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String gasBookId,
             @RequestParam(required = false) String fullName,
             @RequestParam(required = false) String phoneNumber,
@@ -80,7 +81,7 @@ public class GasBookController {
             @RequestParam(defaultValue = "1", required = false) int page,
             @RequestParam(defaultValue = "10", required = false) int limit
     ) {
-        PageResult<GasBookResponse> result = gasBookService.search(gasBookId, fullName, phoneNumber, customerGroup, page, limit);
+        PageResult<GasBookResponse> result = gasBookService.search(keyword, gasBookId, fullName, phoneNumber, customerGroup, page, limit);
         Map<String, Object> pagination = new HashMap<>();
         pagination.put("page", result.getPage());
         pagination.put("limit", result.getSize());

@@ -27,6 +27,7 @@ public interface GasBookMapper {
     GasBookResponse toResponse(GasBookEntity entity);
 
     @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "gasBookCode", source = "gasBookCode")
     @Mapping(target = "fullName", source = "fullName")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "phoneNumber", source = "phoneNumber")
