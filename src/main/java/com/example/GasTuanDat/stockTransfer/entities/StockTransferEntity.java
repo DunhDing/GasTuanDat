@@ -56,7 +56,7 @@ public class StockTransferEntity {
     @JoinColumn(name = "\"toStockId\"")
     private StockEntity toStock;
 
-    @OneToMany(mappedBy = "transfer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "transfer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @org.hibernate.annotations.BatchSize(size = 50)
     private List<StockTransferDetailEntity> details;
 }

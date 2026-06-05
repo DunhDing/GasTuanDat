@@ -75,27 +75,34 @@ public class StockTransferService {
                 .fromStock(fromStock)
                 .toStock(toStock)
                 .employee(employee)
+                .details(new java.util.ArrayList<>())
                 .build();
 
         StockTransferEntity saved = stockTransferRepository.save(transfer);
 
         // Save transfer details
         if (request.getDetails() != null) {
+            java.util.Map<UUID, Short> productQuantityMap = new java.util.HashMap<>();
             for (StockTransferDetailCreateRequest detail : request.getDetails()) {
                 if (detail.getProductId() != null) {
-                    ProductEntity product = productRepository.findById(detail.getProductId())
-                            .orElseThrow(() -> new ApiException(ErrorCode.PRODUCT_NOT_FOUND));
-                    StockTransferDetailEntity transferDetail = StockTransferDetailEntity.builder()
-                            .transfer(saved)
-                            .product(product)
-                            .quantity(detail.getQuantity())
-                            .build();
-                    stockTransferDetailRepository.save(transferDetail);
-                    
-                    adjustInventory(fromStock, product, -detail.getQuantity());
-                    adjustInventory(toStock, product, detail.getQuantity());
+                    productQuantityMap.merge(detail.getProductId(), detail.getQuantity(), (a, b) -> (short)(a + b));
                 }
             }
+
+            for (java.util.Map.Entry<UUID, Short> entry : productQuantityMap.entrySet()) {
+                ProductEntity product = productRepository.findById(entry.getKey())
+                        .orElseThrow(() -> new ApiException(ErrorCode.PRODUCT_NOT_FOUND));
+                StockTransferDetailEntity transferDetail = StockTransferDetailEntity.builder()
+                        .transfer(saved)
+                        .product(product)
+                        .quantity(entry.getValue())
+                        .build();
+                saved.getDetails().add(transferDetail);
+                
+                adjustInventory(fromStock, product, -entry.getValue());
+                adjustInventory(toStock, product, entry.getValue());
+            }
+            stockTransferRepository.save(saved);
         }
 
         return saved;
@@ -194,29 +201,38 @@ public class StockTransferService {
             transfer.setEmployee(employee);
         }
 
-        StockTransferEntity saved = stockTransferRepository.save(transfer);
-
         // Update transfer details - delete all and recreate
         if (request.getDetails() != null) {
-            stockTransferDetailRepository.deleteByTransferTransferId(transferId);
+            if (transfer.getDetails() != null) {
+                transfer.getDetails().clear();
+                stockTransferRepository.saveAndFlush(transfer);
+            } else {
+                transfer.setDetails(new java.util.ArrayList<>());
+            }
+            
+            java.util.Map<UUID, Short> productQuantityMap = new java.util.HashMap<>();
             for (StockTransferDetailCreateRequest detail : request.getDetails()) {
                 if (detail.getProductId() != null) {
-                    ProductEntity product = productRepository.findById(detail.getProductId())
-                            .orElseThrow(() -> new ApiException(ErrorCode.PRODUCT_NOT_FOUND));
-                    StockTransferDetailEntity transferDetail = StockTransferDetailEntity.builder()
-                            .transfer(saved)
-                            .product(product)
-                            .quantity(detail.getQuantity())
-                            .build();
-                    stockTransferDetailRepository.save(transferDetail);
-                    
-                    adjustInventory(transfer.getFromStock(), product, -detail.getQuantity());
-                    adjustInventory(transfer.getToStock(), product, detail.getQuantity());
+                    productQuantityMap.merge(detail.getProductId(), detail.getQuantity(), (a, b) -> (short)(a + b));
                 }
+            }
+
+            for (java.util.Map.Entry<UUID, Short> entry : productQuantityMap.entrySet()) {
+                ProductEntity product = productRepository.findById(entry.getKey())
+                        .orElseThrow(() -> new ApiException(ErrorCode.PRODUCT_NOT_FOUND));
+                StockTransferDetailEntity transferDetail = StockTransferDetailEntity.builder()
+                        .transfer(transfer)
+                        .product(product)
+                        .quantity(entry.getValue())
+                        .build();
+                transfer.getDetails().add(transferDetail);
+                
+                adjustInventory(transfer.getFromStock(), product, -entry.getValue());
+                adjustInventory(transfer.getToStock(), product, entry.getValue());
             }
         }
 
-        return saved;
+        return stockTransferRepository.save(transfer);
     }
 
     @Transactional
