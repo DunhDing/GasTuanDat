@@ -216,8 +216,6 @@ public class AuthService {
                                 .build();
         }
 
-
-
         @Transactional
         public ChangePasswordResponse changePassword(ChangePasswordRequest request) {
                 AccountEntity account = getCurrentEmployeeAccount();
@@ -243,15 +241,8 @@ public class AuthService {
                                 <html>
                                 <body style="font-family:Arial,sans-serif;line-height:1.5;color:#222">
                                         <h2>Yêu cầu cấp lại mật khẩu</h2>
-                                        <p>%s yêu cầu cấp lại mật khẩu.</p>
-                                        <p>Nhấn nút bên dưới để mở trang xác nhận. Trang đó sẽ dùng tài khoản admin đã đăng nhập để approve yêu cầu.</p>
-                                        <p><b>Lưu ý:</b> bạn phải đăng nhập tài khoản admin trước khi bấm nút approve.</p>
-                                        <p>
-                                                <a href="%s"
-                                                         style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:bold">
-                                                        Mở trang xác nhận
-                                                </a>
-                                        </p>
+                                        <p>Tài khoản %s yêu cầu cấp lại mật khẩu từ Hệ thống quản lý nhà phân phối Gas Tuấn Đạt.</p>
+
                                 </body>
                                 </html>
                                 """
